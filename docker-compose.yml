@@ -1,0 +1,30 @@
+  version: '3'
+
+  services:
+    db_postgresql:
+      image: postgres
+      environment:
+        - POSTGRES_DB=db_hrm
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+      ports:
+        - 5432:5432
+
+    backend_django:
+      image: siyam04/hrm-backend-django
+      command: python manage.py runserver 0.0.0.0:8000
+      ports:
+        - 8000:8000
+      depends_on:
+        - db_postgresql
+
+    frontend_vue:
+      image: siyam04/hrm-frontend-vue
+      stdin_open: true
+      build: .
+      command: npm run serve
+      volumes:
+        - .:/app/frontend
+        - ./node_modules:/app/frontend/node_modules
+      ports:
+        - 5000:5000   
